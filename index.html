@@ -8,8 +8,35 @@
   <link rel="stylesheet" href="./src/style.css">
 </head>
 <body>
-  <canvas id="scene"></canvas>
-  <main><h1>Synthwave Drive</h1></main>
+  <canvas id="scene" aria-hidden="true"></canvas>
+  <main>
+    <div class="hud" id="hud" hidden>
+      <span class="hs-chip"><span class="dot" id="dot" data-on="0" aria-hidden="true"></span><span id="bpm">&mdash; BPM</span></span>
+    </div>
+    <p class="msg" id="msg" role="status" aria-live="polite"></p>
+    <div class="overlay" id="overlay">
+      <section class="hs-card start" aria-labelledby="h-title">
+        <p class="hs-eyebrow">Audio visualiser</p>
+        <h1 id="h-title">Synthwave Drive</h1>
+        <p class="pitch">Load any song and an endless neon road drives to its beat.</p>
+        <div class="actions">
+          <button class="hs-btn" id="demo" type="button">Play demo track</button>
+          <button class="hs-btn alt" id="load" type="button">Load a song</button>
+          <button class="hs-btn alt" id="mic" type="button">Use microphone</button>
+        </div>
+        <p class="privacy">Audio stays on your device. Nothing is uploaded. You can also drop a file anywhere.</p>
+      </section>
+    </div>
+    <input id="file" type="file" accept="audio/*" hidden aria-label="Choose an audio file">
+    <div class="bar" id="bar" role="toolbar" aria-label="Controls" hidden>
+      <button class="hs-btn alt" id="play" type="button">Pause</button>
+      <button class="hs-btn alt" id="load2" type="button">Load another</button>
+      <button class="hs-btn alt" id="mic2" type="button">Mic</button>
+      <button class="hs-btn alt" id="full" type="button">Fullscreen</button>
+      <button class="hs-btn alt" id="theme" type="button" aria-pressed="false">Light UI</button>
+    </div>
+  </main>
+  <div class="end">
   <section class="section span-12 creator" aria-labelledby="h-creator">
   <div class="card">
     <div class="card__head"><h2 id="h-creator">Credits</h2></div>
@@ -55,6 +82,7 @@
     </div>
   </div>
 </section>
+  </div>
   <script type="module" src="./src/main.ts"></script>
   <script type="module" src="./src/house/credits/credits.js"></script>
 </body>

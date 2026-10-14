@@ -11,6 +11,7 @@ export function createAudio() {
 
   const api = {
     state: "idle" as AudioState,
+    loop: false,
     onEnded: null as (() => void) | null,
     get ctx() { return ctx; },
     get analyser() { return an; },
@@ -42,6 +43,7 @@ export function createAudio() {
       api.cleanup();
       el = new Audio();
       el.crossOrigin = "anonymous";
+      el.loop = api.loop;
       el.src = url;
       if (revoke) objUrl = url;
       el.onended = () => { api.state = "paused"; api.onEnded?.(); };

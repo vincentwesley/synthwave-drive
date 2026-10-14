@@ -3,5 +3,29 @@
 
 html, body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--font-body, Inter, sans-serif); }
 #scene { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
-main { position: relative; min-height: 100vh; padding: 1rem; }
-.creator { position: relative; max-width: 60rem; margin: 0 auto; padding: 1rem; }
+[hidden] { display: none !important; }
+main { position: relative; height: 100svh; }
+
+/* UI chrome follows the theme; the canvas stays neon. */
+.overlay { position: absolute; inset: 0; display: grid; place-items: center; padding: 1rem; background: rgb(8 10 6 / 0.45); }
+.start { max-width: 28rem; width: 100%; box-sizing: border-box; }
+.start h1 { margin: 0.4rem 0; font: 700 clamp(1.8rem, 7vw, 2.6rem) var(--font-head); }
+.pitch { margin: 0 0 1rem; color: var(--fg-muted); }
+.actions { display: grid; gap: 0.9rem; }
+.actions .hs-btn { justify-content: center; }
+.privacy { margin: 1rem 0 0; font-size: 0.85rem; color: var(--fg-muted); }
+.hs-btn.alt { background: var(--bg-elev); color: var(--fg); }
+
+.msg { position: absolute; z-index: 2; left: 50%; top: 0.75rem; transform: translateX(-50%); margin: 0; max-width: calc(100% - 2rem); padding: 0.4rem 0.8rem; background: var(--bg-elev); color: var(--fg); box-shadow: var(--pix); }
+.msg:empty { display: none; }
+
+.hud { position: absolute; top: 0.75rem; left: 0.75rem; }
+.hud .hs-chip { gap: 0.5rem; font-family: var(--font-mono); text-transform: none; min-height: 28px; }
+.dot { width: 0.7rem; height: 0.7rem; background: var(--border-strong); }
+.dot[data-on="1"] { background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+
+.bar { position: absolute; left: 0; right: 0; bottom: 0.75rem; display: flex; flex-wrap: wrap; justify-content: center; gap: 0.6rem; padding: 0 0.75rem; }
+.bar .hs-btn { padding: 0.4rem 0.8rem; font-size: 0.9rem; }
+
+.end { position: relative; background: var(--bg); padding: 1rem 0; }
+.creator { max-width: 60rem; margin: 0 auto; padding: 1rem; }
