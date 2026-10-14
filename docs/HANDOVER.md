@@ -12,9 +12,9 @@
 2. Repo Settings, Pages, Source: **GitHub Actions**. Then push to `main` (or run the workflow) and the site appears at `https://vincentwesley.github.io/synthwave-drive/`.
 
 ## Known issues / next
-- Sun stripes are faint, and bloom is half-res on mobile only. Tune in `src/scene/sun.ts` and `post.ts`.
+- Bloom is half-res on mobile only (`post.ts`).
 - Shader outputs need `pow(c, 2.2)` because `OutputPass` re-encodes sRGB.
 - e2e beat test takes ~30-40 s because SwiftShader renders at ~6 fps. Analysis runs on a 16 ms `setInterval`, not rAF.
-- Not tested: drag-and-drop, fullscreen, a real mic, real iOS Safari (silent switch and `decodeAudioData`). Test on devices after deploy.
+- Not tested: a real mic, real iOS Safari (silent switch and `decodeAudioData`). Test on devices after deploy.
 - JS chunk is over 500 kB (three.js). Fine for the MVP.
 - Ideas: pre-analysis for climax cues, per-song palette, FPS-based quality tier.
