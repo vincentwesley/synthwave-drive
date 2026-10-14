@@ -7,9 +7,9 @@
 - M4 ship: `deploy.yml` (Pages, e2e gate), `ci.yml`, README with screenshots, CREDITS/NOTICE.
 - Review pass applied (security and bug fixes). Checks: typecheck, 9 unit, build and 6 e2e pass (headless SwiftShader).
 
-## One-time steps for you
-1. The repo is created **private** (house rule). GitHub Pages on a private repo needs GitHub Pro or Team. To go live, either upgrade, or make it public: run `_house/pre-public/CHECKLIST.md` and `check-identity.sh --public`, then give the OK.
-2. Repo Settings, Pages, Source: **GitHub Actions**. Then push to `main` (or run the workflow) and the site appears at `https://vincentwesley.github.io/synthwave-drive/`.
+## Status
+- Repo is **public** (owner OK 2026-10-14), pre-public gate passed. Pages enabled (source: GitHub Actions); live at https://vincentwesley.github.io/synthwave-drive/. Pushes to `main` redeploy after e2e passes.
+- No owner steps left.
 
 ## Known issues / next
 - Bloom is half-res on mobile only (`post.ts`).
