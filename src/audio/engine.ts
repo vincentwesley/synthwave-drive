@@ -10,13 +10,14 @@ export function createEngine(audio: Audio) {
   let det: ReturnType<typeof createBeatDetector> | null = null;
   let feat: ReturnType<typeof createFeatures> | null = null;
   let band: [number, number] = [1, 2];
-  let lastMs = 0;
+  let lastMs = 0, gen = 0;
   const idle: Frame = { beat: 0, energy: 0, bass: 0, mid: 0, high: 0, bpm: null };
 
   return {
     tick(nowMs: number): Frame {
       const an = audio.analyser, ctx = audio.ctx;
       if (!an || !ctx || audio.state === "idle") return idle;
+      if (gen !== audio.gen) { gen = audio.gen; det = feat = null; } // new source: drop old BPM/features
       if (!det || !feat) {
         det = createBeatDetector({ sampleRateHz: ctx.sampleRate });
         feat = createFeatures(ctx.sampleRate);

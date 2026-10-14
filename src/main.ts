@@ -17,4 +17,3 @@ setInterval(() => {
   scene.setFeatures({ ...f, bpm: f.bpm ?? 110 });
   hud(f);
 }, 16);
-document.addEventListener("visibilitychange", () => scene.setPaused(document.hidden));

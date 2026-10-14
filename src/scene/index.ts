@@ -26,7 +26,7 @@ export function createScene(canvas: HTMLCanvasElement, opts: SceneOpts = {}) {
   const post = createPost(renderer, scene, camera);
   const tu = uni(terrain), sunU = uni(sun), su = uni(stars);
 
-  let f = defaults(), paused = false, speed = driveSpeed(0, reduced), travel = 0, time = 0, last = performance.now(), raf = 0;
+  let f = defaults(), speed = driveSpeed(0, reduced), travel = 0, time = 0, last = performance.now(), raf = 0;
 
   const resize = () => {
     const w = canvas.clientWidth || window.innerWidth, h = canvas.clientHeight || window.innerHeight;
@@ -44,11 +44,9 @@ export function createScene(canvas: HTMLCanvasElement, opts: SceneOpts = {}) {
 
   const render = (dt = 0) => {
     const beat = reduced ? f.beat * 0.4 : f.beat;
-    if (!paused) {
-      speed = ease(speed, driveSpeed(f.energy, reduced), dt);
-      travel += speed * dt;
-      time += dt;
-    }
+    speed = ease(speed, driveSpeed(f.energy, reduced), dt);
+    travel += speed * dt;
+    time += dt;
     tu.uTravel!.value = travel; tu.uBeat!.value = beat; tu.uMid!.value = clamp01(f.mid);
     sunU.uBeat!.value = beat;
     sun.scale.setScalar(55 * (1 + beat * 0.06));
@@ -68,7 +66,6 @@ export function createScene(canvas: HTMLCanvasElement, opts: SceneOpts = {}) {
 
   return {
     setFeatures: (next: Partial<Features>) => { f = { ...defaults(), ...next }; },
-    setPaused: (b: boolean) => { paused = b; },
     render,
     dispose: () => {
       cancelAnimationFrame(raf);

@@ -29,18 +29,22 @@ export function initUi(audio: Audio) {
     play.hidden = audio.state === "mic";
     play.textContent = audio.state === "playing" ? "Pause" : "Play";
   };
-  audio.onEnded = syncPlay;
+  audio.onEnded = () => {
+    if (audio.state === "idle") say("The microphone was disconnected.");
+    syncPlay();
+  };
 
   // Every source goes through here so failures surface in the live region, never alert().
-  async function start(fn: () => Promise<void>, fail: string) {
+  async function start(fn: () => Promise<void>, fail: string, isMic = false) {
     say();
     try {
       await fn();
       if (audio.state === "paused") await audio.play();
     } catch (e) {
       const name = (e as DOMException)?.name;
-      say(name === "NotAllowedError" || name === "SecurityError" ? "Microphone access was denied." :
-        name === "NotFoundError" ? "No microphone found." : fail);
+      say(name === "NotAllowedError" && !isMic ? "Click once to enable audio, then try again." :
+        isMic && (name === "NotAllowedError" || name === "SecurityError") ? "Microphone access was denied." :
+        isMic && name === "NotFoundError" ? "No microphone found." : fail);
       return;
     }
     overlay.hidden = true;
@@ -51,11 +55,11 @@ export function initUi(audio: Audio) {
 
   const demo = () => { audio.loop = true; return audio.loadUrl(`${import.meta.env.BASE_URL}audio/synthwave-house-loop.ogg`); };
   const openFile = (f: File) => {
-    if (!f.type.startsWith("audio/")) { say("That file is not an audio file."); return; }
+    if (f.type && !f.type.startsWith("audio/")) { say("That file is not an audio file."); return; }
     audio.loop = false;
     void start(() => audio.loadFile(f), "That audio file could not be played. Try MP3, WAV, OGG or M4A.");
   };
-  const mic = () => start(() => audio.useMic(), "Could not start the microphone.");
+  const mic = () => start(() => audio.useMic(), "Could not start the microphone.", true);
 
   $("demo").onclick = () => void start(demo, "The demo track could not be loaded.");
   for (const id of ["load", "load2"]) $(id).onclick = () => file.click();
