@@ -1,18 +1,13 @@
-> Update at the end of any session that changed state. Keep it lean.
-
-Continue work on **Synthwave Drive** (repo `vincentwesley/synthwave-drive`, deploy: GitHub Pages, not live yet).
-Scaffold only (2026-10-14), no app logic. Only do what the owner asks.
+# Next session
 
 ## Before anything
-1. Path: `C:\Coding Projects\synthwave-drive`. Read `CLAUDE.md` and `../CLAUDE.md`.
+Read docs/HANDOVER.md. Repo is private; Pages needs Pro or public + Settings > Pages > Source: GitHub Actions.
 
 ## How to work here
-- Vite + TS, branch `main`, no remote yet. Checks: `npm run typecheck && npm test && npm run build && npm run e2e`.
-- CSP lives in `index.html` meta (Pages sets no headers); widen only as needed.
+Orchestrate (scout/builder). Headless Playwright only. Commands in CLAUDE.md.
 
 ## Current state
-- Scaffold: house tokens + credits card wired, `src/main.ts` stub, CI, no tests yet.
+MVP complete (M1-M4), pushed to vincentwesley/synthwave-drive (private), checks green.
 
-## Known gaps / ideas
-1. Everything: scene, audio file input, beat detection, tests.
-2. Report outcomes in a line or two.
+## Known gaps
+See HANDOVER.md: real-device/iOS testing, drag-drop and fullscreen untested, sun stripes faint.
