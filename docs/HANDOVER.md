@@ -12,10 +12,9 @@
 - No owner steps left.
 
 ## Known issues / next
-- Lighthouse on the live site (2026-10-15): performance 83, accessibility 100, best practices 100, SEO 100. Performance cost is the three.js bundle (about 500 kB+); code-splitting is the next lever. GitHub Pages cache headers can't be changed.
-- Overdrive (surge) is only unit-tested; it has never been seen rendered (triggering it in e2e would need a debug hook in prod code).
-- Not tested: a real mic, real iOS Safari (silent switch, `decodeAudioData`). Test on devices.
-- `theme-color` meta is the dark colour even in light UI theme (cosmetic).
+- Lighthouse on the live site (2026-10-15, mobile emulation, software GL): accessibility 100, best practices 100, SEO 100, performance 64-67 (was 83 earlier the same day). TBT is dominated by SwiftShader running the shaders on the CPU, so it is not representative of real GPUs. Lazy-loading the scene was tried and did not help, and was reverted. Real levers: code-split three.js, cheaper shaders on low tiers. Re-measure on a real device before spending time here.
+- Overdrive is covered by an e2e (quiet-then-loud fixture, `body[data-surge=1]`) and `docs/screenshots/playing-desktop-surge.png`. Bloom is capped (strength <= 1.1, threshold 0.4) so beat and surge frames never white out.
+- Not tested: a real mic, real iOS Safari (silent switch, `decodeAudioData`). These need a device.
 - Shader outputs need `pow(c, 2.2)` because `OutputPass` re-encodes sRGB.
 - Analysis runs on a 16 ms `setInterval`, not rAF (SwiftShader fps).
 - Ideas: offline pre-analysis for climax cues, three.js code-split.

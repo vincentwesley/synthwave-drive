@@ -14,3 +14,6 @@
 12. **Song profile and overdrive.** A slow (~8 s) average of bass/mid/high/energy sets each song's look: grid tilt, hill roughness and sun colour. A sustained energy jump (after a 10 s warm-up) triggers a bounded overdrive of extra speed, bloom and star streak. Road speed is tempo-locked to detected BPM.
 13. **FPS quality tier.** Under about 45 fps for 3 s it halves bloom resolution, then drops DPR to 1. Tier-up waits 8 s, and the wait doubles after each failed tier-up. `?quality=0` pins full quality, used only by e2e (SwiftShader runs at about 6 fps).
 14. **e2e gates deploy.** The Pages build runs the e2e suite. Timeout is 90 s and CI retries once, because the first SwiftShader test timed out on 2-core runners.
+15. **`body[data-surge]`** mirrors the overdrive state. It is real UI state and lets e2e (and CSS) observe surge without a debug hook.
+16. **Bloom is capped** (strength <= 1.1, threshold 0.4) after sampling frames across beat phases showed beat and surge frames whiting out. Judge look changes by the worst frame, not a single screenshot.
+17. **Lazy scene import was tried and reverted.** It did not improve Lighthouse, and the score moves with software-GL cost, not load order.
