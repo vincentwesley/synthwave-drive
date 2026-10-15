@@ -59,7 +59,7 @@ export function createScene(canvas: HTMLCanvasElement, opts: SceneOpts = {}) {
     sunU.uBeat!.value = L.beat;
     sun.scale.setScalar(55 * (1 + L.beat * 0.06));
     su.uTime!.value = starTime; su.uHigh!.value = clamp01(f.high);
-    post.bloom.strength = (0.8 + L.bloomBeat + L.bloomSurge) * post.gain;
+    post.bloom.strength = Math.min(1.1, 0.7 + L.bloomBeat + L.bloomSurge) * post.gain; // hard cap: worst beat/surge frame must stay contrasty
     camera.position.y = 1.8 + L.camBeat;
     post.composer.render(dt);
   };

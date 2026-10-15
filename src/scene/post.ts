@@ -7,7 +7,7 @@ import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 
 export function createPost(renderer: WebGLRenderer, scene: Scene, camera: PerspectiveCamera) {
   const composer = new EffectComposer(renderer);
-  const bloom = new UnrealBloomPass(new Vector2(256, 256), 0.8, 0.6, 0.15);
+  const bloom = new UnrealBloomPass(new Vector2(256, 256), 0.8, 0.5, 0.4);
   composer.addPass(new RenderPass(scene, camera));
   composer.addPass(bloom);
   composer.addPass(new OutputPass()); // applies renderer tone mapping + sRGB

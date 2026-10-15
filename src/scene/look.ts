@@ -21,7 +21,7 @@ export function createLook(reduced: boolean) {
       L.surge = s.surge * (r ? 0.4 : 1);
       L.speedBoost = s.surge * (r ? 0.08 : 0.4);
       L.starBoost = r ? 0 : s.surge * 3;
-      L.bloomBeat = r ? 0 : f.beat * 1.2 * (1 - s.surge * 0.7); // overdrive is a sustained accent, so beat flashes ease off to avoid white-out
+      L.bloomBeat = r ? 0 : f.beat * 0.3 * (1 - s.surge * 0.7); // overdrive is a sustained accent, so beat flashes ease off to avoid white-out
       L.bloomSurge = s.surge * (r ? 0.01 : 0.03);
       L.camBeat = r ? 0 : f.beat * 0.08;
       return L;

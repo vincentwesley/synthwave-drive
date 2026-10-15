@@ -37,7 +37,7 @@ void main(){
     float far = smoothstep(20.0, 120.0, vDist);
     vec3 lc = mix(magenta, orange, clamp(vH/9.0,0.,1.)*.6 + uMid*.3);
     lc = mix(lc, cyan, smoothstep(30.0, 4.0, ax) * (.4 + uTilt*.25));
-    col = vec3(.03,.008,.06) + lc * g * (1.0 + uBeat*1.6*(1.0-uSurge*.5) + uSurge*.2) * (1.0 - far*.3);
+    col = vec3(.03,.008,.06) + lc * g * (1.0 + uBeat*0.9*(1.0-uSurge*.5) + uSurge*.1) * (1.0 - far*.3);
   }
   float f = smoothstep(40.0, 230.0, vDist);
   gl_FragColor = vec4(pow(mix(col, uFog, f), vec3(2.2)), 1.0);
