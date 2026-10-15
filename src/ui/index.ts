@@ -9,6 +9,7 @@ export function initTheme() {
     if (light) root.dataset.theme = "light"; else delete root.dataset.theme;
     btn.setAttribute("aria-pressed", String(light));
     btn.textContent = light ? "Dark UI" : "Light UI";
+    document.querySelector('meta[name="theme-color"]')?.setAttribute("content", light ? "#eef7f1" : "#11150e"); // = --bg in tokens.css
   };
   let saved = false;
   try { saved = localStorage.getItem("theme") === "light"; } catch { /* storage blocked */ }

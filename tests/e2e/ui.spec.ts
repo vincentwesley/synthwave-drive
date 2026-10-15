@@ -123,3 +123,14 @@ test("reduced motion: scene loads without errors", async ({ page }) => {
   await shot(page, "playing-desktop-reduced");
   expect(errors).toEqual([]);
 });
+
+test("overdrive: quiet then loud song sets data-surge", async ({ page }) => {
+  test.setTimeout(180000);
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await page.goto(URL);
+  await page.locator("#file").setInputFiles("tests/fixtures/quiet-then-loud.wav");
+  await expect(page.locator("#overlay")).toBeHidden();
+  await expect(page.locator("body")).toHaveAttribute("data-surge", "1", { timeout: 120000 });
+  await page.waitForTimeout(2500); // let the look ease into overdrive
+  await shot(page, "playing-desktop-surge");
+});

@@ -1,22 +1,30 @@
 import { createAudio } from "./audio/input";
 import { createEngine } from "./audio/engine";
-import { createScene } from "./scene";
 import { initTheme, initUi } from "./ui";
+import type { Features } from "./scene";
 
 const canvas = document.getElementById("scene") as HTMLCanvasElement;
-const scene = createScene(canvas, {
-  reducedMotion: matchMedia("(prefers-reduced-motion: reduce)").matches,
-  fixedQuality: new URLSearchParams(location.search).get("quality") === "0" ? 0 : undefined, // e2e: keep full quality under slow software GL
-});
 const audio = createAudio();
 const engine = createEngine(audio);
 initTheme();
 const hud = initUi(audio);
 
+// three.js loads lazily, off the critical path; UI works meanwhile and features are dropped until the scene is ready.
+let setFeatures: ((f: Features) => void) | undefined;
+void import("./scene").then(({ createScene }) => {
+  setFeatures = createScene(canvas, {
+    reducedMotion: matchMedia("(prefers-reduced-motion: reduce)").matches,
+    fixedQuality: new URLSearchParams(location.search).get("quality") === "0" ? 0 : undefined, // e2e: keep full quality under slow software GL
+  }).setFeatures;
+});
+
 // Analysis runs on a timer, not rAF, so beat timing stays accurate when rendering is slow.
+let surge = "";
 setInterval(() => {
   if (document.hidden) return;
   const f = engine.tick(performance.now());
-  scene.setFeatures(f);
+  setFeatures?.(f);
   hud(f);
+  const s = f.surge ? "1" : "0";
+  if (s !== surge) { surge = s; document.body.dataset.surge = s; }
 }, 16);
