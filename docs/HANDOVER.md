@@ -12,9 +12,10 @@
 - No owner steps left.
 
 ## Known issues / next
-- Bloom is half-res on mobile only (`post.ts`).
+- Lighthouse on the live site (2026-10-15): performance 83, accessibility 100, best practices 100, SEO 100. Performance cost is the three.js bundle (about 500 kB+); code-splitting is the next lever. GitHub Pages cache headers can't be changed.
+- Overdrive (surge) is only unit-tested; it has never been seen rendered (triggering it in e2e would need a debug hook in prod code).
+- Not tested: a real mic, real iOS Safari (silent switch, `decodeAudioData`). Test on devices.
+- `theme-color` meta is the dark colour even in light UI theme (cosmetic).
 - Shader outputs need `pow(c, 2.2)` because `OutputPass` re-encodes sRGB.
-- e2e beat test takes ~30-40 s because SwiftShader renders at ~6 fps. Analysis runs on a 16 ms `setInterval`, not rAF.
-- Not tested: a real mic, real iOS Safari (silent switch and `decodeAudioData`). Test on devices after deploy.
-- JS chunk is over 500 kB (three.js). Fine for the MVP.
-- Ideas: pre-analysis for climax cues, per-song palette, FPS-based quality tier.
+- Analysis runs on a 16 ms `setInterval`, not rAF (SwiftShader fps).
+- Ideas: offline pre-analysis for climax cues, three.js code-split.

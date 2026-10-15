@@ -11,3 +11,6 @@
 9. **UI chrome uses house tokens, dark by default.** The scene keeps its own neon palette because the brief calls for one. Reduced motion slows and dims the response and keeps the beat.
 10. **Deploy: GitHub Pages via Actions with SHA-pinned actions.** The brief requires it, so it overrides the root Cloudflare default. Pages can't set headers, so the CSP goes in a `<meta>` tag. Vite `base` is `/synthwave-drive/`.
 11. **The repo starts private (house rule).** Pages on a private repo needs Pro, so going live is an owner step listed in HANDOVER.md.
+12. **Song profile and overdrive.** A slow (~8 s) average of bass/mid/high/energy sets each song's look: grid tilt, hill roughness and sun colour. A sustained energy jump (after a 10 s warm-up) triggers a bounded overdrive of extra speed, bloom and star streak. Road speed is tempo-locked to detected BPM.
+13. **FPS quality tier.** Under about 45 fps for 3 s it halves bloom resolution, then drops DPR to 1. Tier-up waits 8 s, and the wait doubles after each failed tier-up. `?quality=0` pins full quality, used only by e2e (SwiftShader runs at about 6 fps).
+14. **e2e gates deploy.** The Pages build runs the e2e suite. Timeout is 90 s and CI retries once, because the first SwiftShader test timed out on 2-core runners.
