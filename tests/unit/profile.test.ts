@@ -41,4 +41,12 @@ describe("profile", () => {
     expect(r.slowBass).toBeCloseTo(0.5, 5);
     expect(r.variance).toBe(0);
   });
+  it("ramp from 0 after a source change does not inflate variance or surge", () => {
+    const p = createProfile();
+    let r = p.update(lvl(0), 0.016);
+    for (let t = 0; t < 0.4; t += 0.016) r = p.update(lvl(Math.min(0.5, t * 5)), 0.016);
+    r = run(p, 0.5, 20);
+    expect(r.variance).toBeLessThan(0.05);
+    expect(r.surge).toBe(0);
+  });
 });

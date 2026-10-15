@@ -18,8 +18,8 @@ export function createEngine(audio: Audio) {
   return {
     tick(nowMs: number): Frame {
       const an = audio.analyser, ctx = audio.ctx;
-      if (!an || !ctx || audio.state === "idle") return idle;
-      if (gen !== audio.gen) { gen = audio.gen; det = feat = null; profile.reset(); } // new source: drop old BPM/features
+      if (!an || !ctx || audio.state === "idle") { lastMs = 0; return idle; }
+      if (gen !== audio.gen) { gen = audio.gen; det = feat = null; profile.reset(); lastMs = 0; } // new source: drop old BPM/features
       if (!det || !feat) {
         det = createBeatDetector({ sampleRateHz: ctx.sampleRate });
         feat = createFeatures(ctx.sampleRate);

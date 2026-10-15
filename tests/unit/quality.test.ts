@@ -23,4 +23,11 @@ describe("quality", () => {
   it("stays put at healthy fps", () => {
     expect(run(createQuality(), 60, 30)).toEqual([]);
   });
+  it("backs off retrying a tier that failed", () => {
+    const q = createQuality();
+    const moves: number[] = [];
+    for (let i = 0; i < 60 * 25; i++) { const r = q.sample(1 / (q.level === 2 ? 60 : 40)); if (r !== null) moves.push(r); }
+    expect(moves).toEqual([1, 2, 1, 2]); // one failed retry, then held
+    for (let i = 0; i < 60 * 8; i++) expect(q.sample(1 / 60)).toBeNull();
+  });
 });
