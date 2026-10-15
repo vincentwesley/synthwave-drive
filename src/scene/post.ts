@@ -11,10 +11,11 @@ export function createPost(renderer: WebGLRenderer, scene: Scene, camera: Perspe
   composer.addPass(new RenderPass(scene, camera));
   composer.addPass(bloom);
   composer.addPass(new OutputPass()); // applies renderer tone mapping + sRGB
-  const setSize = (w: number, h: number, dpr: number) => {
+  const setSize = (w: number, h: number, dpr: number, level = 0) => {
     composer.setPixelRatio(dpr);
     composer.setSize(w, h);
-    if (w < 768) bloom.setSize(w * dpr * 0.5, h * dpr * 0.5); // half-res bloom on mobile
+    const k = (w < 768 ? 0.5 : 1) * (level > 0 ? 0.5 : 1); // half-res bloom on mobile / reduced quality
+    if (k < 1) bloom.setSize(w * dpr * k, h * dpr * k);
   };
   return { composer, bloom, setSize };
 }

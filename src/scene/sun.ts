@@ -1,7 +1,7 @@
 import { Mesh, PlaneGeometry, ShaderMaterial } from "three";
 
 const frag = /* glsl */ `
-uniform float uBeat; varying vec2 vUv;
+uniform float uBeat, uShare; varying vec2 vUv;
 void main(){
   vec2 p = (vUv - .5) * 2.0;
   float r = length(p);
@@ -13,7 +13,7 @@ void main(){
   float g = mix(.55, .06, u); // gap fraction: thick at the bottom, thin higher up
   float aa = fwidth(u * 9.0);
   float cut = (1.0 - smoothstep(g - aa, g + aa, f)) * step(t, .7);
-  vec3 col = mix(vec3(1.0,.02,.5), vec3(1.0,.5,.08), smoothstep(.0,.95,t)) * (.85 + uBeat*.35);
+  vec3 col = mix(mix(vec3(1.0,.02,.5), vec3(.75,.1,1.0), uShare*.6), vec3(1.0,.5,.08), smoothstep(.0,.95,t)) * (.85 + uBeat*.35);
   float a = disc * (1.0 - cut);
   if (a < .01) discard;
   gl_FragColor = vec4(pow(col, vec3(2.2)), a);
@@ -23,7 +23,7 @@ export function createSun() {
   const mat = new ShaderMaterial({
     vertexShader: "varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }",
     fragmentShader: frag,
-    uniforms: { uBeat: { value: 0 } },
+    uniforms: { uBeat: { value: 0 }, uShare: { value: 0 } },
     transparent: true,
   });
   const mesh = new Mesh(new PlaneGeometry(2, 2), mat);

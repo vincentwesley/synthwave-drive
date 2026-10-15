@@ -6,7 +6,7 @@ for (const [name, size] of [["desktop", { width: 1280, height: 720 }], ["375", {
     page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
     page.on("pageerror", (e) => errors.push(e.message));
     await page.setViewportSize(size);
-    await page.goto("/synthwave-drive/");
+    await page.goto("/synthwave-drive/?quality=0");
     await page.waitForTimeout(2500);
     const shot = await page.screenshot();
     // decode the screenshot in-page and count distinct quantised colours

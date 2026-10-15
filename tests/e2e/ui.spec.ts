@@ -2,7 +2,7 @@ import { readFileSync } from "fs";
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 
-const URL = "/synthwave-drive/";
+const URL = "/synthwave-drive/?quality=0";
 const shot = (p: Page, n: string) => p.screenshot({ path: `docs/screenshots/${n}.png` });
 const startViaFile = async (p: Page) => {
   await p.locator("#file").setInputFiles("tests/fixtures/kicks-120bpm.wav");

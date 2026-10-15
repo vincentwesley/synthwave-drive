@@ -1,4 +1,6 @@
 # Synthwave Drive
+**Live: https://vincentwesley.github.io/synthwave-drive/**
+
 An endless neon wireframe road that reacts to the beat of any song you load.
 
 ![Driving, desktop](docs/screenshots/playing-desktop-dark.png)
@@ -13,7 +15,16 @@ An endless neon wireframe road that reacts to the beat of any song you load.
 - Everything runs locally in your browser.
 
 ## Usage
-Open the page, press start, and load an audio file (or use the bundled demo track).
+Open the page, then press **Play demo track**, **Load a song** (any audio file), or **Use microphone**. You can also drag and drop an audio file anywhere on the page.
+
+## What makes each drive different
+- Road speed is locked to the tempo detected from the song's BPM.
+- Bass lifts the hills.
+- Palette and terrain come from the song's long-term spectrum, so each track looks different.
+- When a section surges, the drive goes into overdrive.
+
+## Browser support
+Modern Chromium, Firefox and Safari. On iOS, playback with the silent switch on needs iOS 17+. Quality steps down automatically on slow GPUs.
 
 ## Develop
 ```
