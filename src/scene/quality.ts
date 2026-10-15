@@ -1,5 +1,5 @@
 // Adaptive quality: 0 full, 1 bloom res halved again, 2 also DPR 1.
-export const MAX_LEVEL = 2;
+const MAX_LEVEL = 2;
 
 export function createQuality() {
   let level = 0, t = 0, ema = 60, low = 0, high = 0;
@@ -18,5 +18,5 @@ export function createQuality() {
     level = next; low = high = 0; ema = 50; // neutral so the new level is judged fresh
     return level;
   };
-  return { sample };
+  return { sample, get level() { return level; } };
 }

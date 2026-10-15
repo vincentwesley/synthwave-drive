@@ -1,6 +1,8 @@
 import { ACESFilmicToneMapping, Color, SRGBColorSpace, PerspectiveCamera, Scene, WebGLRenderer } from "three";
 import type { ShaderMaterial } from "three";
-import { clamp01, driveSpeed, ease } from "./speed";
+import { driveSpeed } from "./speed";
+import { clamp01, ease, zeroFeatures } from "../util";
+import type { Features } from "../util";
 import { createLook } from "./look";
 import { createPost } from "./post";
 import { createQuality } from "./quality";
@@ -8,12 +10,9 @@ import { createStars } from "./stars";
 import { createSun } from "./sun";
 import { createTerrain, FOG } from "./terrain";
 
-export interface Features { beat: number; energy: number; bass: number; mid: number; high: number; bpm: number;
-  /** Slow per-song profile; surge is smoothed 0..1. All 0 = idle look. */
-  slowBass: number; slowMid: number; slowHigh: number; variance: number; surge: number }
-export interface SceneOpts { reducedMotion?: boolean }
+export type { Features };
+export interface SceneOpts { reducedMotion?: boolean; fixedQuality?: number }
 
-const defaults = (): Features => ({ beat: 0, energy: 0, bass: 0, mid: 0, high: 0, bpm: 110, slowBass: 0, slowMid: 0, slowHigh: 0, variance: 0, surge: 0 });
 const uni = (o: { material: unknown }) => (o.material as ShaderMaterial).uniforms as Record<string, { value: number }>;
 
 export function createScene(canvas: HTMLCanvasElement, opts: SceneOpts = {}) {
@@ -30,15 +29,13 @@ export function createScene(canvas: HTMLCanvasElement, opts: SceneOpts = {}) {
   const post = createPost(renderer, scene, camera);
   const tu = uni(terrain), sunU = uni(sun), su = uni(stars);
 
-  const look = createLook();
-  let f = defaults(), speed = driveSpeed(0, reduced), travel = 0, time = 0, starTime = 0, last = performance.now(), raf = 0;
+  const look = createLook(reduced);
+  let f = zeroFeatures(), speed = driveSpeed(0, reduced), travel = 0, time = 0, starTime = 0, last = performance.now(), raf = 0;
 
-  let quality = 0;
-  const pinned = new URLSearchParams(location.search).get("quality") === "0"; // e2e: keep full quality under slow software GL
   const q = createQuality();
   const resize = () => {
     const w = canvas.clientWidth || window.innerWidth, h = canvas.clientHeight || window.innerHeight;
-    const dpr = quality >= 2 ? 1 : Math.min(window.devicePixelRatio || 1, 2);
+    const quality = opts.fixedQuality ?? q.level, dpr = quality >= 2 ? 1 : Math.min(window.devicePixelRatio || 1, 2);
     renderer.setPixelRatio(dpr);
     renderer.setSize(w, h, false);
     post.setSize(w, h, dpr, quality);
@@ -51,35 +48,33 @@ export function createScene(canvas: HTMLCanvasElement, opts: SceneOpts = {}) {
   window.addEventListener("resize", resize);
 
   const render = (dt = 0) => {
-    const beat = reduced ? f.beat * 0.4 : f.beat;
     const L = look.update(f, dt);
-    speed = ease(speed, driveSpeed(f.energy, reduced, f.bpm) * (1 + L.surge * (reduced ? 0.08 : 0.4)), dt);
+    speed = ease(speed, driveSpeed(f.energy, reduced, f.bpm) * (1 + L.speedBoost), dt);
     travel += speed * dt;
     time += dt;
-    starTime += dt * (1 + L.surge * (reduced ? 0 : 3));
-    tu.uTravel!.value = travel; tu.uBeat!.value = beat; tu.uMid!.value = clamp01(f.mid);
-    tu.uBass!.value = reduced ? L.bass * 0.4 : L.bass; tu.uRough!.value = L.rough; tu.uTilt!.value = L.tilt; tu.uSurge!.value = L.surge * (reduced ? 0.4 : 1);
+    starTime += dt * (1 + L.starBoost);
+    tu.uTravel!.value = travel; tu.uBeat!.value = L.beat; tu.uMid!.value = clamp01(f.mid);
+    tu.uBass!.value = L.bass; tu.uRough!.value = L.rough; tu.uTilt!.value = L.tilt; tu.uSurge!.value = L.surge;
     sunU.uShare!.value = L.share;
-    sunU.uBeat!.value = beat;
-    sun.scale.setScalar(55 * (1 + beat * 0.06));
+    sunU.uBeat!.value = L.beat;
+    sun.scale.setScalar(55 * (1 + L.beat * 0.06));
     su.uTime!.value = starTime; su.uHigh!.value = clamp01(f.high);
-    post.bloom.strength = (0.8 + (reduced ? 0 : beat * 1.2) + L.surge * (reduced ? 0.1 : 0.35)) * (canvas.clientWidth < 768 ? 0.4 : 1); // half-res bloom is brighter
-    camera.position.y = 1.8 + (reduced ? 0 : beat * 0.08);
+    post.bloom.strength = (0.8 + L.bloomBeat + L.bloomSurge) * post.gain;
+    camera.position.y = 1.8 + L.camBeat;
     post.composer.render(dt);
   };
 
   const loop = (now: number) => {
     const raw = (now - last) / 1000, dt = Math.min(raw, 0.1);
     last = now;
-    const lv = pinned ? null : q.sample(raw);
-    if (lv !== null) { quality = lv; resize(); }
+    if (opts.fixedQuality === undefined && q.sample(raw) !== null) resize();
     render(dt);
     raf = requestAnimationFrame(loop);
   };
   raf = requestAnimationFrame(loop);
 
   return {
-    setFeatures: (next: Partial<Features>) => { f = { ...defaults(), ...next }; },
+    setFeatures: (next: Partial<Features>) => { f = { ...zeroFeatures(), ...next }; },
     render,
     dispose: () => {
       cancelAnimationFrame(raf);

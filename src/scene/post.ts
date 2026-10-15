@@ -11,11 +11,13 @@ export function createPost(renderer: WebGLRenderer, scene: Scene, camera: Perspe
   composer.addPass(new RenderPass(scene, camera));
   composer.addPass(bloom);
   composer.addPass(new OutputPass()); // applies renderer tone mapping + sRGB
-  const setSize = (w: number, h: number, dpr: number, level = 0) => {
+  const post = { composer, bloom, gain: 1, setSize(w: number, h: number, dpr: number, level = 0) {
     composer.setPixelRatio(dpr);
     composer.setSize(w, h);
-    const k = (w < 768 ? 0.5 : 1) * (level > 0 ? 0.5 : 1); // half-res bloom on mobile / reduced quality
+    const mobile = w < 768;
+    const k = (mobile ? 0.5 : 1) * (level > 0 ? 0.5 : 1); // half-res bloom on mobile / reduced quality
     if (k < 1) bloom.setSize(w * dpr * k, h * dpr * k);
-  };
-  return { composer, bloom, setSize };
+    post.gain = mobile ? 0.4 : 1; // half-res bloom is brighter; level changes keep the same gain so brightness doesn't drift
+  } };
+  return post;
 }

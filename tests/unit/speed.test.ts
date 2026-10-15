@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { driveSpeed, ease } from "../../src/scene/speed";
+import { driveSpeed } from "../../src/scene/speed";
+import { ease } from "../../src/util";
 
 describe("speed", () => {
   it("idles at a fixed speed and clamps energy", () => {
