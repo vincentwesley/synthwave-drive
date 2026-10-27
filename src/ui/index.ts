@@ -3,27 +3,9 @@ import type { Audio } from "../audio/input";
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-export function initTheme() {
-  const root = document.documentElement, btn = $("theme");
-  const set = (light: boolean) => {
-    if (light) root.dataset.theme = "light"; else delete root.dataset.theme;
-    btn.setAttribute("aria-pressed", String(light));
-    btn.textContent = light ? "Dark UI" : "Light UI";
-    document.querySelector('meta[name="theme-color"]')?.setAttribute("content", light ? "#eef7f1" : "#11150e"); // = --bg in tokens.css
-  };
-  let saved = false;
-  try { saved = localStorage.getItem("theme") === "light"; } catch { /* storage blocked */ }
-  set(saved);
-  btn.onclick = () => {
-    const light = root.dataset.theme !== "light";
-    set(light);
-    try { localStorage.setItem("theme", light ? "light" : "dark"); } catch { /* ignore */ }
-  };
-}
-
 export function initUi(audio: Audio) {
   const msg = $("msg"), overlay = $("overlay"), file = $<HTMLInputElement>("file");
-  const play = $("play"), bpmEl = $("bpm"), dot = $("dot");
+  const play = $("play"), bpmEl = $("bpm"), dot = $("dot"), track = $("track"), hud = $("hud");
   const say = (t = "") => { msg.textContent = t; };
 
   const syncPlay = () => {
@@ -36,7 +18,7 @@ export function initUi(audio: Audio) {
   };
 
   // Every source goes through here so failures surface in the live region, never alert().
-  async function start(fn: () => Promise<void>, fail: string, isMic = false) {
+  async function start(fn: () => Promise<void>, fail: string, label: string, isMic = false) {
     say();
     try {
       await fn();
@@ -49,33 +31,52 @@ export function initUi(audio: Audio) {
       return;
     }
     overlay.hidden = true;
-    $("bar").hidden = false;
-    $("hud").hidden = false;
+    hud.hidden = false;
+    track.textContent = label;
     syncPlay();
+    wake();
   }
 
   const demo = () => { audio.loop = true; return audio.loadUrl(`${import.meta.env.BASE_URL}audio/synthwave-house-loop.ogg`); };
   const openFile = (f: File) => {
     if (f.type && !f.type.startsWith("audio/")) { say("That file is not an audio file."); return; }
     audio.loop = false;
-    void start(() => audio.loadFile(f), "That audio file could not be played. Try MP3, WAV, OGG or M4A.");
+    void start(() => audio.loadFile(f), "That audio file could not be played. Try MP3, WAV, OGG or M4A.", f.name.replace(/\.[^.]+$/, ""));
   };
-  const mic = () => start(() => audio.useMic(), "Could not start the microphone.", true);
+  const mic = () => start(() => audio.useMic(), "Could not start the microphone.", "Microphone", true);
 
-  $("demo").onclick = () => void start(demo, "The demo track could not be loaded.");
+  $("demo").onclick = () => void start(demo, "The demo track could not be loaded.", "Synthwave House Loop (demo)");
   for (const id of ["load", "load2"]) $(id).onclick = () => file.click();
   for (const id of ["mic", "mic2"]) $(id).onclick = () => void mic();
   file.onchange = () => { const f = file.files?.[0]; file.value = ""; if (f) openFile(f); };
-  play.onclick = async () => {
+  const toggle = async () => {
     try { if (audio.state === "playing") audio.pause(); else await audio.play(); } catch { say("Playback failed."); }
     syncPlay();
   };
+  play.onclick = toggle;
   addEventListener("dragover", (e) => e.preventDefault());
   addEventListener("drop", (e) => { e.preventDefault(); const f = e.dataTransfer?.files[0]; if (f) openFile(f); });
 
   const full = $("full");
   if (!document.fullscreenEnabled) full.hidden = true;
-  full.onclick = () => void (document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen()).catch(() => say("Fullscreen is not available."));
+  const fullscreen = () => void (document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen()).catch(() => say("Fullscreen is not available."));
+  full.onclick = fullscreen;
+
+  // Space and F work once driving, unless focus is on a control that already handles the key.
+  addEventListener("keydown", (e) => {
+    if (hud.hidden || e.ctrlKey || e.metaKey || e.altKey || (e.target as HTMLElement).closest("button, input")) return;
+    if (e.key === " " && audio.state !== "mic") { e.preventDefault(); void toggle(); }
+    else if (e.key === "f" || e.key === "F") fullscreen();
+  });
+
+  // Hide the cursor and controls after a few still seconds of playback; a paused player keeps them up.
+  let idleTimer = 0;
+  function wake() {
+    document.body.classList.remove("idle");
+    clearTimeout(idleTimer);
+    idleTimer = window.setTimeout(() => { if (!hud.hidden && audio.state !== "paused") document.body.classList.add("idle"); }, 3000);
+  }
+  for (const ev of ["pointermove", "pointerdown", "keydown"]) addEventListener(ev, wake, { passive: true });
 
   let lastBpm = "", lastOn = "";
   return (f: { bpm: number | null; beat: number }) => {

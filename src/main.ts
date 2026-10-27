@@ -1,12 +1,11 @@
 import { createAudio } from "./audio/input";
 import { createEngine } from "./audio/engine";
-import { initTheme, initUi } from "./ui";
+import { initUi } from "./ui";
 import { createScene } from "./scene";
 
 const canvas = document.getElementById("scene") as HTMLCanvasElement;
 const audio = createAudio();
 const engine = createEngine(audio);
-initTheme();
 const hud = initUi(audio);
 
 const { setFeatures } = createScene(canvas, {

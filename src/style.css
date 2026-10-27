@@ -1,31 +1,62 @@
 @import "./house/tokens.css";
 @import "./house/credits/credits.css";
 
-html, body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--font-body, Inter, sans-serif); }
+/* App chrome takes its colours from the scene, not the house palette; the credits card below keeps the house look. */
+:root { --ink: #0a0414; --text: #f4ecff; --dim: #bcaedb; --neon: #ff3d9a; --line: rgb(244 236 255 / 0.35); }
+
+html, body { margin: 0; background: var(--ink); color: var(--text); font-family: var(--font-body, Inter, sans-serif); }
 #scene { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
 [hidden] { display: none !important; }
-main { position: relative; height: 100svh; }
+main { position: relative; height: 100svh; overflow: hidden; }
 
-/* UI chrome follows the theme; the canvas stays neon. */
-.overlay { position: absolute; inset: 0; display: grid; place-items: center; padding: 1rem; background: rgb(8 10 6 / 0.45); }
-.start { max-width: 28rem; width: 100%; box-sizing: border-box; }
-.start h1 { margin: 0.4rem 0; font: 700 clamp(1.8rem, 7vw, 2.6rem) var(--font-head); }
-.pitch { margin: 0 0 1rem; color: var(--fg-muted); }
-.actions { display: grid; gap: 0.9rem; }
-.actions .hs-btn { justify-content: center; }
-.privacy { margin: 1rem 0 0; font-size: 0.85rem; color: var(--fg-muted); }
-.hs-btn.alt { background: var(--bg-elev); color: var(--fg); }
+.overlay {
+  position: absolute; inset: 0; display: flex; align-items: flex-end;
+  padding: clamp(1rem, 5vw, 4rem);
+  background: linear-gradient(to top right, rgb(10 4 20 / 0.92) 10%, rgb(10 4 20 / 0.55) 45%, transparent 75%);
+}
+.start { max-width: 34rem; }
+.start h1 {
+  margin: 0 0 1rem; font: 700 clamp(3rem, 12vw, 7rem) / 0.86 var(--font-head);
+  letter-spacing: -0.045em; text-transform: uppercase;
+  transform: skewX(-7deg); transform-origin: bottom left;
+  text-shadow: 0 0 0.6em rgb(255 61 154 / 0.45);
+}
+.pitch { margin: 0 0 1.5rem; max-width: 28rem; font-size: 1.1rem; line-height: 1.5; color: var(--dim); }
+.actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+.privacy { margin: 1.25rem 0 0; font-size: 0.85rem; color: var(--dim); }
 
-.msg { position: absolute; z-index: 2; left: 50%; top: 0.75rem; transform: translateX(-50%); margin: 0; max-width: calc(100% - 2rem); padding: 0.4rem 0.8rem; background: var(--bg-elev); color: var(--fg); box-shadow: var(--pix); }
+.btn {
+  min-height: 44px; padding: 0.6rem 1.1rem; border: 1px solid var(--line); border-radius: 0;
+  background: rgb(10 4 20 / 0.4); color: var(--text); font: 600 1rem var(--font-body); cursor: pointer;
+}
+.btn:hover { border-color: var(--neon); }
+.btn.primary { background: var(--neon); border-color: var(--neon); color: var(--ink); }
+.btn.primary:hover { background: #ff69b2; }
+
+.msg {
+  position: absolute; z-index: 2; left: 50%; top: 1rem; transform: translateX(-50%); margin: 0; max-width: calc(100% - 2rem);
+  padding: 0.5rem 0.9rem; background: var(--ink); color: var(--text); border-left: 3px solid var(--neon);
+}
 .msg:empty { display: none; }
 
-.hud { position: absolute; top: 0.75rem; left: 0.75rem; }
-.hud .hs-chip { gap: 0.5rem; font-family: var(--font-mono); text-transform: none; min-height: 28px; }
-.dot { width: 0.7rem; height: 0.7rem; background: var(--border-strong); }
-.dot[data-on="1"] { background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+.hud {
+  position: absolute; left: 0; right: 0; bottom: 0; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: 0.25rem 1rem; padding: 2.5rem clamp(0.75rem, 3vw, 1.5rem) 0.5rem;
+  background: linear-gradient(to top, rgb(10 4 20 / 0.75), transparent);
+}
+.now { display: flex; align-items: center; gap: 0.6rem; min-width: 0; margin: 0; font: 500 0.85rem var(--font-mono); color: var(--dim); }
+.dot { flex: none; width: 0.55rem; height: 0.55rem; border-radius: 50%; background: var(--line); }
+.dot[data-on="1"] { background: var(--neon); box-shadow: 0 0 10px var(--neon); }
+.track { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text); }
+.track:not(:empty)::before { content: "/"; margin-right: 0.6rem; color: var(--line); }
+.controls { display: flex; flex-wrap: wrap; }
+.ctl { min-height: 44px; padding: 0 0.7rem; border: 0; background: none; color: var(--dim); font: 500 0.9rem var(--font-body); cursor: pointer; }
+.ctl:hover { color: var(--text); }
 
-.bar { position: absolute; left: 0; right: 0; bottom: 0.75rem; display: flex; flex-wrap: wrap; justify-content: center; gap: 0.6rem; padding: 0 0.75rem; }
-.bar .hs-btn { padding: 0.4rem 0.8rem; font-size: 0.9rem; }
+/* Chrome fades out while the pointer rests; any input or keyboard focus brings it back. */
+body.idle main { cursor: none; }
+body.idle .hud:not(:focus-within) { opacity: 0; }
+@media (prefers-reduced-motion: no-preference) { .hud { transition: opacity 0.5s; } }
 
 .end { position: relative; background: var(--bg); padding: 1rem 0; }
 .creator { max-width: 60rem; margin: 0 auto; padding: 1rem; }

@@ -6,7 +6,7 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self' data:; font-src 'self'; media-src 'self' blob:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
   <title>Synthwave Drive</title>
   <meta name="description" content="Load any song and an endless neon synthwave road drives to its beat. Beat detection runs locally in your browser; audio is never uploaded.">
-  <meta name="theme-color" content="#11150e">
+  <meta name="theme-color" content="#0a0414">
   <link rel="canonical" href="https://vincentwesley.github.io/synthwave-drive/">
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <meta property="og:type" content="website">
@@ -25,30 +25,28 @@
 <body>
   <canvas id="scene" aria-hidden="true"></canvas>
   <main>
-    <div class="hud" id="hud" hidden>
-      <span class="hs-chip"><span class="dot" id="dot" data-on="0" aria-hidden="true"></span><span id="bpm">&mdash; BPM</span></span>
-    </div>
     <p class="msg" id="msg" role="status" aria-live="polite"></p>
     <div class="overlay" id="overlay">
-      <section class="hs-card start" aria-labelledby="h-title">
-        <p class="hs-eyebrow">Audio visualiser</p>
-        <h1 id="h-title">Synthwave Drive</h1>
-        <p class="pitch">Load any song and an endless neon road drives to its beat.</p>
+      <section class="start" aria-labelledby="h-title">
+        <h1 id="h-title">Synthwave <br>Drive</h1>
+        <p class="pitch">Put on a song. The road takes the tempo, and every kick drum sends a wave of light toward the horizon.</p>
         <div class="actions">
-          <button class="hs-btn" id="demo" type="button">Play demo track</button>
-          <button class="hs-btn alt" id="load" type="button">Load a song</button>
-          <button class="hs-btn alt" id="mic" type="button">Use microphone</button>
+          <button class="btn primary" id="demo" type="button">Play the demo</button>
+          <button class="btn" id="load" type="button">Open a song</button>
+          <button class="btn" id="mic" type="button">Use microphone</button>
         </div>
-        <p class="privacy">Audio stays on your device. Nothing is uploaded. You can also drop a file anywhere.</p>
+        <p class="privacy">Runs in your browser; audio is never uploaded. You can also drop a file anywhere.</p>
       </section>
     </div>
     <input id="file" type="file" accept="audio/*" hidden aria-label="Choose an audio file">
-    <div class="bar" id="bar" role="toolbar" aria-label="Controls" hidden>
-      <button class="hs-btn alt" id="play" type="button">Pause</button>
-      <button class="hs-btn alt" id="load2" type="button">Load another</button>
-      <button class="hs-btn alt" id="mic2" type="button">Mic</button>
-      <button class="hs-btn alt" id="full" type="button">Fullscreen</button>
-      <button class="hs-btn alt" id="theme" type="button" aria-pressed="false">Light UI</button>
+    <div class="hud" id="hud" role="toolbar" aria-label="Player" hidden>
+      <p class="now"><span class="dot" id="dot" data-on="0" aria-hidden="true"></span><span id="bpm">&mdash; BPM</span><span class="track" id="track"></span></p>
+      <div class="controls">
+        <button class="ctl" id="play" type="button" aria-keyshortcuts="Space">Pause</button>
+        <button class="ctl" id="load2" type="button">Open</button>
+        <button class="ctl" id="mic2" type="button">Mic</button>
+        <button class="ctl" id="full" type="button" aria-keyshortcuts="F">Fullscreen</button>
+      </div>
     </div>
   </main>
   <div class="end">

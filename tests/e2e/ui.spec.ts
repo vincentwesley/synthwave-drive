@@ -10,7 +10,7 @@ const startViaFile = async (p: Page) => {
 };
 const axe = async (p: Page) => expect((await new AxeBuilder({ page: p }).analyze()).violations).toEqual([]);
 
-test("loads clean with overlay; kicks fixture yields BPM; theme", async ({ page }) => {
+test("loads clean with overlay; kicks fixture yields BPM and track name", async ({ page }) => {
   test.setTimeout(90000);
   const errors: string[] = [];
   page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
@@ -24,15 +24,9 @@ test("loads clean with overlay; kicks fixture yields BPM; theme", async ({ page 
   await startViaFile(page);
   const bpm = async () => parseInt((await page.locator("#bpm").textContent()) ?? "", 10);
   await expect.poll(async () => { const b = await bpm(); return b >= 110 && b <= 130; }, { timeout: 40000 }).toBe(true);
+  await expect(page.locator("#track")).toHaveText("kicks-120bpm");
+  await page.mouse.move(10, 10);
   await shot(page, "playing-desktop-dark");
-  await axe(page);
-  await page.locator("#theme").click();
-  await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
-  await page.waitForTimeout(300);
-  await shot(page, "playing-desktop-light");
-  await axe(page);
-  await page.reload();
-  await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
   await axe(page);
   expect(errors).toEqual([]);
 });
@@ -109,6 +103,20 @@ test("pause and ended leave a sensible HUD", async ({ page }) => {
   await page.evaluate(() => { const a = (window as never as { __a: HTMLMediaElement }).__a; a.currentTime = Math.max(0, a.duration - 0.05); });
   await expect(page.locator("#play")).toHaveText("Play", { timeout: 10000 });
   await expect(page.locator("#hud")).toBeVisible();
+});
+
+test("controls hide while playing and return on input; space pauses", async ({ page }) => {
+  await page.goto(URL);
+  await startViaFile(page);
+  await expect(page.locator("#play")).toHaveText("Pause");
+  await expect(page.locator("body")).toHaveClass(/idle/, { timeout: 6000 });
+  await page.mouse.move(50, 50);
+  await expect(page.locator("body")).not.toHaveClass(/idle/);
+  await page.locator("body").focus();
+  await page.keyboard.press("Space");
+  await expect(page.locator("#play")).toHaveText("Play");
+  await page.waitForTimeout(3500);
+  await expect(page.locator("body")).not.toHaveClass(/idle/); // paused keeps the controls up
 });
 
 test("reduced motion: scene loads without errors", async ({ page }) => {
