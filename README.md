@@ -44,6 +44,8 @@ GitHub Pages via `.github/workflows/deploy.yml` on push to `main`. Vite base pat
 Audio never leaves your device. No network calls, no analytics. Nothing is stored except your theme choice in `localStorage`. No secrets or env vars needed.
 
 ## Licence and credits
+Designed and built by Vin, Vin's Atelier (https://vwesley.dev). Logo by @portus_workstation / @wason25_pz (Instagram); the logo is all rights reserved (see NOTICE.md), not covered by the MIT licence.
+
 MIT, see `LICENSE`. Credits in `CREDITS.md`, third-party licences in `THIRD_PARTY_NOTICES.md`. Creator art is all rights reserved.
 
 Provided as is, no warranty.

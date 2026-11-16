@@ -1,5 +1,6 @@
 @import "./house/tokens.css";
 @import "./house/credits/credits.css";
+@import "./brand/logo.css";
 
 html, body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--font-body, Inter, sans-serif); }
 #scene { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }

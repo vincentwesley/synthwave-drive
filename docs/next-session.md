@@ -11,3 +11,5 @@ MVP complete (M1-M4), pushed to vincentwesley/synthwave-drive (public, Pages liv
 
 ## Known gaps
 See HANDOVER.md: real-device/iOS testing, drag-drop and fullscreen untested, sun stripes faint.
+
+Branch `vin-atelier-brand` (unmerged): draggable Vin's Atelier logo + sign-off in the credits area (`src/brand/`, `tests/e2e/logo.spec.ts`).
