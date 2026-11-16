@@ -16,3 +16,4 @@ coverage/
 *.log
 graphify-out/
 .claude/settings.local.json
+qa-output/
