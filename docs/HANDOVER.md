@@ -19,3 +19,4 @@
 - Analysis runs on a 16 ms `setInterval`, not rAF (SwiftShader fps).
 - Ideas: offline pre-analysis for climax cues, three.js code-split.
 - CI e2e: ui.spec test 1 loads `?quality=2` (main.ts now pins quality 0-2 from the URL); full-quality software GL starved axe/reload on 2-core runners. Verified locally under 6x CPU throttle.
+- Deploy runs via workflow_run after CI succeeds on main (no duplicate tests); docs-only pushes skip CI so skip deploy; use workflow_dispatch to redeploy.
