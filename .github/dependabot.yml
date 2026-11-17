@@ -7,6 +7,10 @@ updates:
     open-pull-requests-limit: 3
     groups:
       minor-and-patch: { update-types: [minor, patch] }
+    ignore:
+      # @types/node tracks the runtime (.nvmrc = 24), not the latest Node.
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: github-actions
     directory: /
     schedule: { interval: monthly }
