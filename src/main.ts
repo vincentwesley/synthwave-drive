@@ -12,7 +12,7 @@ const hud = initUi(audio);
 
 const { setFeatures } = createScene(canvas, {
   reducedMotion: matchMedia("(prefers-reduced-motion: reduce)").matches,
-  fixedQuality: new URLSearchParams(location.search).get("quality") === "0" ? 0 : undefined, // e2e: keep full quality under slow software GL
+  fixedQuality: ((q) => (q === "0" || q === "1" || q === "2" ? Number(q) : undefined))(new URLSearchParams(location.search).get("quality")), // e2e: pin quality (0 full .. 2 lowest) so adaptive tiers don't flap under software GL
 });
 
 // Analysis runs on a timer, not rAF, so beat timing stays accurate when rendering is slow.

@@ -3,6 +3,7 @@ import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 
 const URL = "/synthwave-drive/?quality=0";
+const LOW = "/synthwave-drive/?quality=2"; // cheapest render: axe/reload starve on a saturated main thread under software GL
 const shot = (p: Page, n: string) => p.screenshot({ path: `docs/screenshots/${n}.png` });
 const startViaFile = async (p: Page) => {
   await p.locator("#file").setInputFiles("tests/fixtures/kicks-120bpm.wav");
@@ -16,7 +17,7 @@ test("loads clean with overlay; kicks fixture yields BPM; theme", async ({ page 
   page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
   page.on("pageerror", (e) => errors.push(e.message));
   await page.setViewportSize({ width: 1280, height: 720 });
-  await page.goto(URL);
+  await page.goto(LOW);
   await expect(page.locator("#overlay")).toBeVisible();
   await page.waitForTimeout(1500);
   await shot(page, "overlay-desktop-dark");
