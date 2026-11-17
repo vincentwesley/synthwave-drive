@@ -13,3 +13,4 @@ MVP complete (M1-M4), pushed to vincentwesley/synthwave-drive (public, Pages liv
 See HANDOVER.md: real-device/iOS testing, drag-drop and fullscreen untested, sun stripes faint.
 
 Vin's Atelier draggable logo + sign-off live in the credits area (`src/brand/`, `tests/e2e/logo.spec.ts`), inside `<footer class="end">` (axe `region` fix, 2026-11-16 milestone check). e2e is slow under load (SwiftShader); BPM/overlay specs can time out when other Playwright runs share the machine.
+- 2026-11-17: logo spec waits for the --logo-x transition before measuring (15s polls).
